@@ -1090,12 +1090,7 @@ const PLANS = {
 };
 
 function openPurchase(id) {
-  const p = PLANS[id];
-  document.getElementById('modalPlanName').textContent = p.name;
-  document.getElementById('modalPrice').textContent = p.price;
-  document.getElementById('modalDesc').textContent = p.desc;
   document.getElementById('modalOverlay').classList.add('open');
-  document.getElementById('modalOverlay').dataset.planId = id;
 }
 
 function closeModal() {
