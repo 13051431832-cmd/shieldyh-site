@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Desk — 体验 DeepSeek 版 Claude Code，无需账号烦恼</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #1a1a1a;
+    --surface-hover: #252525;
+    --border: #2a2a2a;
+    --text: #e0e0e0;
+    --text-dim: #999;
+    --accent: #5c9ce6;
+    --accent-glow: #7ab8f5;
+    --green: #5ecb90;
+    --yellow: #d9a845;
+    --red: #e05570;
+    --blue: #6ba4e0;
+    --font: "SF Mono", "Fira Code", "JetBrains Mono", "Menlo", monospace;
+    --radius: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+    backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 1.2rem; font-weight: 700; color: var(--accent); cursor: pointer; }
+  .logo span { color: var(--text-dim); font-weight: 400; }
+
+  .top-nav { display: flex; gap: 4px; }
+  .nav-item {
+    color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+    padding: 6px 16px; border-radius: 6px; transition: all 0.15s;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); background: var(--surface); }
+
+  /* ── Hero ───────────────── */
+  .hero {
+    text-align: center;
+    padding: 80px 40px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(92,156,230,0.15);
+    color: var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero .subtitle {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero .pain-points {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 40px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .hero .pain-points span { text-decoration: line-through; opacity: 0.5; }
+
+  /* ── Platform tabs ──────── */
+  .platform-tabs {
+    display: inline-flex;
+    gap: 4px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .plat-tab {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .plat-tab:hover { color: var(--text); }
+  .plat-tab.active {
+    background: var(--bg);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── Download box ───────── */
+  .download-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 1.5);
+    padding: 32px 40px;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* ── Download button ────── */
+  .download-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    padding: 18px 48px;
+    font-family: var(--font);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 100%;
+  }
+  .download-btn:hover { background: var(--accent-glow); }
+  .download-btn .download-icon { font-size: 1.5rem; }
+  .download-btn .download-icon + span {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .download-btn .download-hint {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+
+  /* ── Dev command (collapsed) ── */
+  .dev-cmd .install-cmd-wrap {
+    display: inline-flex;
+    max-width: 520px;
+  }
+
+  .hero .install-cmd-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 620px;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .hero .install-cmd-wrap:hover { border-color: var(--accent); }
+  .hero .install-cmd-wrap .prompt { color: var(--green); flex: 1; text-align: left; font-size: 0.9rem; word-break: break-all; }
+  .hero .install-cmd-wrap .copy-hint {
+    color: var(--text-dim); font-size: 0.75rem;
+    background: var(--bg); padding: 4px 10px; border-radius: 4px; white-space: nowrap;
+  }
+  .hero .after-cmd {
+    color: var(--text-dim); font-size: 0.8rem; margin-top: 12px;
+  }
+
+  /* ── Sections ───────────── */
+  .section {
+    padding: 60px 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .section h2 {
+    color: var(--accent); font-size: 1.4rem; margin-bottom: 32px; text-align: center;
+  }
+
+  /* ── How it works ───────── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    counter-reset: step;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    position: relative;
+  }
+  .step-card .step-num {
+    width: 36px; height: 36px;
+    background: var(--accent); color: #000;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .step-card h3 { color: var(--text); font-size: 1rem; margin-bottom: 6px; }
+  .step-card p { color: var(--text-dim); font-size: 0.85rem; }
+
+  /* ── Features ───────────── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .feature-card .icon { font-size: 1.5rem; margin-bottom: 12px; }
+  .feature-card h3 { color: var(--text); font-size: 1rem; margin-bottom: 8px; }
+  .feature-card p { color: var(--text-dim); font-size: 0.85rem; }
+
+  /* ── Before/After ───────── */
+  .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .ba-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+  .ba-card.before { border-color: rgba(224,85,112,0.3); }
+  .ba-card.after { border-color: rgba(94,203,144,0.3); }
+  .ba-card h3 { font-size: 1rem; margin-bottom: 16px; }
+  .ba-card.before h3 { color: var(--red); }
+  .ba-card.after h3 { color: var(--green); }
+  .ba-card ul { list-style: none; font-size: 0.85rem; color: var(--text-dim); }
+  .ba-card ul li { padding: 4px 0; }
+  .ba-card.before ul li::before { content: "✗ "; color: var(--red); }
+  .ba-card.after ul li::before { content: "✓ "; color: var(--green); }
+
+  /* ── Pricing ────────────── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .price-card:hover { border-color: var(--accent); }
+  .price-card.featured {
+    border-color: var(--accent);
+    background: rgba(92,156,230,0.06);
+  }
+  .price-card .plan-name { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .price-card .plan-price { font-size: 2.2rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+  .price-card .plan-price sub { font-size: 0.8rem; color: var(--text-dim); font-weight: 400; }
+  .price-card .plan-desc { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 20px; }
+  .price-card .plan-features {
+    list-style: none; text-align: left; font-size: 0.85rem;
+    color: var(--text-dim); margin-bottom: 24px;
+  }
+  .price-card .plan-features li { padding: 4px 0; }
+  .price-card .plan-features li::before { content: "✓"; color: var(--green); margin-right: 8px; }
+
+  .buy-btn {
+    display: block;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .buy-btn:hover { background: var(--accent-glow); }
+  .buy-btn.outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .buy-btn.outline:hover { background: var(--accent); color: #000; }
+
+  /* ── Modal ──────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 30;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+  }
+  .modal h3 { color: var(--accent); margin-bottom: 12px; }
+  .modal .price-display { font-size: 2rem; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .modal .plan-name-display { color: var(--text-dim); margin-bottom: 24px; }
+  .modal .pay-btn {
+    display: block; width: 100%;
+    background: var(--accent); color: #000;
+    border: none; border-radius: var(--radius);
+    padding: 14px;
+    font-family: var(--font); font-weight: 700; font-size: 1rem;
+    cursor: pointer; margin-bottom: 12px;
+  }
+  .modal .cancel-btn {
+    background: none; border: none;
+    color: var(--text-dim); font-family: var(--font); cursor: pointer; font-size: 0.85rem;
+  }
+
+  .result-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 24px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box .key {
+    color: var(--accent); font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 16px; word-break: break-all;
+  }
+  .result-box .install-cmd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: var(--green);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    word-break: break-all;
+    cursor: pointer;
+    text-align: left;
+  }
+  .result-box .install-cmd:hover { border-color: var(--accent); }
+
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #000;
+    padding: 10px 24px; border-radius: var(--radius);
+    font-weight: 700; font-size: 0.9rem;
+    z-index: 40; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── FAQ ────────────────── */
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  .faq-item h4 { color: var(--text); font-size: 0.95rem; margin-bottom: 8px; cursor: pointer; }
+  .faq-item p { color: var(--text-dim); font-size: 0.85rem; }
+
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    .hero { padding: 40px 16px 40px; }
+    .section { padding: 40px 16px; }
+    .before-after { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="window.location='/'">Deep <span>Desk</span></div>
+  <nav class="top-nav">
+    <a class="nav-item" href="/">技能市场</a>
+    <a class="nav-item active" href="/product.html">Deep Desk</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge">Powered by DeepSeek</div>
+  <h1>桌面上的 DeepSeek AI<br>自带前端的 <em>Deep Desk</em></h1>
+  <p class="subtitle">装好就有可视化界面——浏览器打开直接用，不用记命令、不用翻墙、不用注册 Claude 账户</p>
+  <div class="pain-points">
+    <span>注册 Claude 账户（需海外手机）</span>
+    <span>翻墙 + VPN</span>
+    <span>黑窗口敲命令</span>
+  </div>
+
+  <!-- Download card -->
+  <div class="download-box">
+    <div class="platform-tabs">
+      <button class="plat-tab active" onclick="switchPlatform('mac')">macOS</button>
+      <button class="plat-tab" onclick="switchPlatform('win')">Windows</button>
+      <button class="plat-tab" onclick="switchPlatform('linux')">Linux</button>
+    </div>
+
+    <a class="download-btn" href="#" onclick="return false">
+      <span class="download-icon">↓</span>
+      <span>下载 Deep Desk</span>
+      <span class="download-hint" id="downloadHint">macOS · 安装后双击打开</span>
+    </a>
+
+    <p class="after-cmd" style="margin-top:12px;color:var(--text-dim)">下载后双击安装 → 打开浏览器自动跳转 → 开始对话</p>
+  </div>
+
+  <details class="dev-cmd">
+    <summary style="cursor:pointer;color:var(--text-dim);font-size:0.8rem">开发者 / 命令行安装</summary>
+    <div class="install-cmd-wrap" style="margin-top:12px" onclick="copyCmd('curl -fsSL https://shieldyh.com/install.sh | bash')">
+      <span class="prompt">$ curl -fsSL https://shieldyh.com/install.sh | bash</span>
+      <span class="copy-hint">复制</span>
+    </div>
+  </details>
+</section>
+
+<!-- How it works -->
+<section class="section">
+  <h2>三步到手</h2>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>购买 License</h3>
+      <p>选套餐、支付，拿到激活码</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>粘贴命令</h3>
+      <p>复制安装命令到终端回车</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>打开界面</h3>
+      <p>浏览器打开 localhost:3456，开始对话</p>
+    </div>
+  </div>
+</section>
+
+<!-- Before / After -->
+<section class="section" style="background:var(--surface);max-width:none;padding:60px 40px;">
+  <div style="max-width:1000px;margin:0 auto;">
+    <h2>没有 Deep Desk 之前 vs 有了之后</h2>
+    <div class="before-after">
+      <div class="ba-card before">
+        <h3>自己折腾</h3>
+        <ul>
+          <li>搜教程：怎么装 Claude Code</li>
+          <li>注册 Claude 账户（需要海外手机号）</li>
+          <li>搞 VPN 翻墙访问 Anthropic</li>
+          <li>装 bun / Node.js</li>
+          <li>配 ANTHROPIC_BASE_URL</li>
+          <li>改 settings.json / .zshrc</li>
+          <li>遇到报错逐个排查</li>
+          <li>搞定之后：30-60 分钟过去了</li>
+        </ul>
+      </div>
+      <div class="ba-card after">
+        <h3>用 Deep Desk</h3>
+        <ul>
+          <li>复制粘贴一条命令</li>
+          <li>回车，等 30 秒</li>
+          <li>浏览器打开界面，开始对话</li>
+          <li>DeepSeek 模型已配好</li>
+          <li>200+ 个技能已装好</li>
+          <li>Shell 环境已配好</li>
+          <li>报错？不存在</li>
+          <li><strong>省掉的不只是时间，还有烦躁</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DeepSeek API Guide -->
+<section class="section" id="deepseek-guide">
+  <h2>2 分钟获取 DeepSeek API Key（小白跟着做）</h2>
+  <p style="text-align:center;color:var(--text-dim);margin-bottom:32px;font-size:0.9rem">
+    Deep Desk 内置的 AI 模型来自 DeepSeek。注册只需手机号，新用户有免费额度。
+  </p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>打开注册页面</h3>
+      <p style="font-size:0.8rem;color:var(--accent);word-break:break-all">platform.deepseek.com</p>
+      <p>浏览器打开，点击 <strong>"注册"</strong>，输入手机号，接收验证码，完成注册。不需要实名认证。</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>创建 API Key</h3>
+      <p>登录后点击左侧 <strong>"API Keys"</strong> → 点击 <strong>"创建 API key"</strong> → 复制生成的 key（格式：sk-xxx...）。</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>贴回终端</h3>
+      <p>安装脚本会提示你 <strong>"粘贴 API key"</strong>——把刚才复制的 sk-xxx 贴进去，回车。完成！</p>
+    </div>
+  </div>
+  <div style="margin-top:24px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);text-align:center;font-size:0.85rem">
+    <span style="color:var(--green)">💡</span>
+    <strong style="color:var(--green)">免费额度够用多久？</strong>
+    <span style="color:var(--text-dim)">DeepSeek 新注册即送免费 token，日常编程提问够用 1-2 周。用完后充值最低 ¥10 起，按用量扣费，每天几毛钱。</span>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section">
+  <h2>Deep Desk 里有什么</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="icon">🖥️</div>
+      <h3>自带可视化界面</h3>
+      <p>装好即有一个漂亮的网页界面——多标签对话、一键审批权限、消息记录留存。不用记命令，浏览器里就能用。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🧠</div>
+      <h3>DeepSeek 模型已内置</h3>
+      <p>deepseek-v4-pro + deepseek-v4-flash 双模型分层已配好。打开界面就能选模型，无需申请 API key。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">⚡</div>
+      <h3>30 秒装完</h3>
+      <p>从零到能用只需一条命令。bun、Node.js、Claude Code、PDF 解析全部自动安装。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎯</div>
+      <h3>200+ 技能开箱即用</h3>
+      <p>前端、后端、测试、安全、DevOps……各领域技能已预装，ccb 启动即用。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💻</div>
+      <h3>全平台覆盖</h3>
+      <p>macOS (Intel + M 芯片)、Windows (x64 + ARM)、Linux x64 全支持。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔌</div>
+      <h3>离线也能用</h3>
+      <p>首次激活后无需联网。U 盘版甚至装的时候都不需要网络。</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔄</div>
+      <h3>技能市场持续更新</h3>
+      <p>Pro 用户享受 3 个月技能增量更新，新出的 skill 自动推送到你的机器。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section" id="pricing">
+  <h2>选套餐，开始体验</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="plan-name">基础版</div>
+      <div class="plan-price">¥99<sub>/次</sub></div>
+      <div class="plan-desc">装好就能用，省掉 30 分钟折腾</div>
+      <ul class="plan-features">
+        <li>可视化 Web 界面</li>
+        <li>DeepSeek 模型已配好</li>
+        <li>bun + Node.js + ccb</li>
+        <li>1 台设备</li>
+      </ul>
+      <button class="buy-btn outline" onclick="openPurchase('basic')">购买</button>
+    </div>
+    <div class="price-card featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">¥199<sub>/次</sub></div>
+      <div class="plan-desc">最受欢迎</div>
+      <ul class="plan-features">
+        <li>基础版全部内容</li>
+        <li>200+ 技能全部预装</li>
+        <li>gstack 浏览器自动化</li>
+        <li>社区 MCP 插件</li>
+        <li>3 个月增量更新</li>
+        <li>3 台设备</li>
+      </ul>
+      <button class="buy-btn" onclick="openPurchase('pro')">购买</button>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="max-width:700px;">
+  <h2>常见问题</h2>
+  <div class="faq-item">
+    <h4>Deep Desk 和 Claude Code 是什么关系？</h4>
+    <p>Deep Desk = Claude Code + 可视化 Web 界面 + DeepSeek 后端。底层是 Claude Code 的能力，但加了一个漂亮的网页界面让你在浏览器里用，后端跑的是 DeepSeek 模型。不用翻墙、不用注册 Anthropic 海外账户。</p>
+  </div>
+  <div class="faq-item">
+    <h4>有界面吗？和纯命令行有什么区别？</h4>
+    <p>有。装好 Deep Desk 后浏览器打开 localhost:3456，就能看到一个深色主题的聊天界面——支持多标签对话、一键复制消息、权限审批卡片。你也可以在终端输入 ccb 用命令行模式，两个都能用。</p>
+  </div>
+  <div class="faq-item">
+    <h4>我还是需要自己注册 DeepSeek 吗？</h4>
+    <p>是的，需要你自己的 DeepSeek API key。不过不用担心——DeepSeek 注册只需手机号，免费额度够用很久，我们在安装时会一步一步引导你完成。你要做的只有：打开网页 → 手机注册 → 复制粘贴 key。</p>
+  </div>
+  <div class="faq-item">
+    <h4>买了能用多久？</h4>
+    <p>基础版和 Pro 版都是一次购买、永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。</p>
+  </div>
+  <div class="faq-item">
+    <h4>能在几台电脑上用？</h4>
+    <p>基础版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。</p>
+  </div>
+  <div class="faq-item">
+    <h4>Windows 能用吗？</h4>
+    <p>能。Windows 10/11 的 x64 和 ARM64 都支持，双击 install.bat 就能装。</p>
+  </div>
+</section>
+
+<!-- Purchase Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalPlanName">Pro</h3>
+    <div class="price-display" id="modalPrice">¥199</div>
+    <div class="plan-name-display" id="modalDesc">单次安装授权</div>
+    <p style="color:var(--text-dim);margin-bottom:24px;font-size:0.85rem">
+      支付后获得 License Key + DeepSeek 注册指引。支持支付宝 / 微信支付。
+    </p>
+    <button class="pay-btn" onclick="simulatePayment()">前往支付</button>
+    <button class="cancel-btn" onclick="closeModal()">取消</button>
+    <div class="result-box" id="resultBox">
+      <p style="color:var(--green);margin-bottom:12px">支付成功！你的 License Key：</p>
+      <div class="key" id="licenseKey">CCB-XXXXXXXXXXXX</div>
+      <p style="color:var(--text-dim);margin-bottom:8px;font-size:0.8rem">复制以下命令到终端完成安装：</p>
+      <div class="install-cmd" id="licenseCmd" onclick="copyCmd(this.textContent)">
+        curl -fsSL https://shieldyh.com/install.sh?key=XXX | bash
+      </div>
+      <p style="color:var(--text-dim);font-size:0.75rem">
+        License Key 已发送到你的邮箱。激活绑定设备后不可转让。
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+const PLANS = {
+  'basic': { name:'基础版', price:'¥99',  desc:'装好就能用，省掉 30 分钟折腾', keyPrefix:'CCB-BASIC' },
+  'pro':   { name:'Pro',   price:'¥199', desc:'最受欢迎 — 200+ 技能预装，3 台设备', keyPrefix:'CCB-PRO' },
+};
+
+function openPurchase(id) {
+  const p = PLANS[id];
+  document.getElementById('modalPlanName').textContent = p.name;
+  document.getElementById('modalPrice').textContent = p.price;
+  document.getElementById('modalDesc').textContent = p.desc;
+  document.getElementById('resultBox').classList.remove('show');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalOverlay').dataset.planId = id;
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function simulatePayment() {
+  const p = PLANS[document.getElementById('modalOverlay').dataset.planId];
+  const rand = Array.from({length:24}, ()=>'0123456789ABCDEF'[Math.floor(Math.random()*16)]).join('');
+  const key = p.keyPrefix + '-' + rand;
+  document.getElementById('licenseKey').textContent = key;
+  document.getElementById('licenseCmd').textContent =
+    'curl -fsSL https://shieldyh.com/install.sh?key=' + key + ' | bash';
+  document.getElementById('resultBox').classList.add('show');
+}
+
+function switchPlatform(plat) {
+  document.querySelectorAll('.plat-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.plat-tab').forEach(b => {
+    if (b.textContent.trim().toLowerCase().startsWith(plat)) b.classList.add('active');
+  });
+  const hints = { mac: 'macOS · 安装后双击打开', win: 'Windows 10/11 · 双击安装', linux: 'Linux x64 · 终端运行' };
+  document.getElementById('downloadHint').textContent = hints[plat] || '';
+}
+
+function copyCmd(t) {
+  navigator.clipboard.writeText(t.trim()).then(()=>{
+    const el = document.getElementById('toast');
+    el.textContent = 'Copied!';
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 1500);
+  });
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+
+</body>
+</html>
