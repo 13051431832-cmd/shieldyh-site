@@ -171,6 +171,32 @@
     max-width: 520px;
   }
 
+  /* ── Language toggle ─────── */
+  .lang-toggle {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2px;
+  }
+  .lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--bg);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
   .hero .install-cmd-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -413,15 +439,19 @@
 <header>
   <div class="logo" onclick="window.location='/'">Deep <span>Desk</span></div>
   <nav class="top-nav">
-    <a class="nav-item active" href="/skills.html">技能市场</a>
-    <a class="nav-item" href="/">Deep Desk</a>
+    <a class="nav-item active" href="/skills.html" data-i18n="nav_skills">技能市场</a>
+    <a class="nav-item" href="/" data-i18n="nav_home">Deep Desk</a>
   </nav>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="switchLang('zh')">中文</button>
+    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+  </div>
 </header>
 
 <!-- Hero -->
 <section class="hero">
   <div class="badge">Powered by DeepSeek</div>
-  <h1>体验 DeepSeek 驱动的<br><em>Claude Code</em> 完整功能</h1>
+  <h1 id="heroH1">体验 DeepSeek 驱动的<br><em>Claude Code</em> 完整功能</h1>
   <p class="subtitle">不用翻墙、不用海外账户、不用配命令行。装好浏览器打开就能用。</p>
   <div class="pain-points">
     <span>注册 Claude 账户（需海外手机）</span>
@@ -675,6 +705,379 @@
 <div class="toast" id="toast">Copied!</div>
 
 <script>
+// ── I18N ────────────────────────────────────────────────────────
+let LANG = (localStorage.getItem('deepdesk_lang') || 'zh');
+
+const I18N = {
+  zh: {
+    nav_skills: '技能市场',
+    nav_home: 'Deep Desk',
+    badge: 'Powered by DeepSeek',
+    hero_h1: '体验 DeepSeek 驱动的<br><em>Claude Code</em> 完整功能',
+    hero_sub: '不用翻墙、不用海外账户、不用配命令行。装好浏览器打开就能用。',
+    pain1: '注册 Claude 账户（需海外手机）',
+    pain2: '翻墙 + VPN',
+    pain3: '下载配置太复杂',
+    tab_mac: 'macOS',
+    tab_win: 'Windows',
+    tab_linux: 'Linux',
+    download_btn: '下载 Deep Desk',
+    download_hint_mac: 'macOS · 安装后双击打开',
+    download_hint_win: 'Windows 10/11 · 双击安装',
+    download_hint_linux: 'Linux x64 · 终端运行',
+    download_after: '下载后双击安装 → 打开浏览器自动跳转 → 开始对话',
+    dev_title: '开发者 / 命令行安装',
+    steps_title: '三步到手',
+    step1_title: '购买 License',
+    step1_desc: '选套餐、支付，拿到激活码',
+    step2_title: '粘贴命令',
+    step2_desc: '复制安装命令到终端回车',
+    step3_title: '打开就能用',
+    step3_desc: '浏览器自动打开聊天页面，开始对话',
+    vs_title: '没有 Deep Desk 之前 vs 有了之后',
+    vs_before: '自己折腾',
+    vs_after: '用 Deep Desk',
+    vs_b1: '搜教程：怎么装 Claude Code',
+    vs_b2: '注册 Claude 账户（需要海外手机号）',
+    vs_b3: '搞 VPN 翻墙访问 Anthropic',
+    vs_b4: '装 bun / Node.js',
+    vs_b5: '配 ANTHROPIC_BASE_URL',
+    vs_b6: '改 settings.json / .zshrc',
+    vs_b7: '遇到报错逐个排查',
+    vs_b8: '搞定之后：30-60 分钟过去了',
+    vs_a1: '复制粘贴一条命令',
+    vs_a2: '回车，等 30 秒',
+    vs_a3: '打开浏览器，开始对话',
+    vs_a4: 'DeepSeek 模型已配好',
+    vs_a5: '200+ 个技能已装好',
+    vs_a6: 'Shell 环境已配好',
+    vs_a7: '报错？不存在',
+    vs_a8: '省掉的不只是时间，还有烦躁',
+    ds_title: '2 分钟获取 DeepSeek API Key（跟着做）',
+    ds_sub: 'Deep Desk 内置的 AI 模型来自 DeepSeek。注册只需手机号，新用户有免费额度。',
+    ds_step1_title: '打开注册页面',
+    ds_step1_url: 'platform.deepseek.com',
+    ds_step1_desc: '浏览器打开，点击"注册"，输入手机号，接收验证码，完成注册。不需要实名认证。',
+    ds_step2_title: '创建 API Key',
+    ds_step2_desc: '登录后点击左侧 "API Keys" → 点击 "创建 API key" → 复制生成的 key（格式：sk-xxx...）。',
+    ds_step3_title: '贴回终端',
+    ds_step3_desc: '安装时会提示"粘贴 API key"——把复制的 sk-xxx 贴进去，回车。完成！',
+    ds_tip: '免费额度够用多久？',
+    ds_tip_desc: 'DeepSeek 新注册即送免费 token，日常编程提问够用 1-2 周。用完后充值最低 ¥10 起。',
+    feat_title: 'Deep Desk 里有什么',
+    feat1_title: '打开浏览器就能对话',
+    feat1_desc: '装好自动跳出一个聊天页面，像微信一样打字就行。可以同时聊好几个话题，消息自动保存。',
+    feat2_title: 'DeepSeek 模型已内置',
+    feat2_desc: 'deepseek-v4-pro + deepseek-v4-flash 双模型分层已配好。打开就能选模型。',
+    feat3_title: '30 秒装完',
+    feat3_desc: '从零到能用只需一条命令。所需工具全部自动安装，你什么都不用管。',
+    feat4_title: '200+ 技能开箱即用',
+    feat4_desc: '前端、后端、测试、安全、DevOps……各领域技能已预装，开箱即用。',
+    feat5_title: '全平台覆盖',
+    feat5_desc: 'macOS (Intel + M 芯片)、Windows (x64 + ARM)、Linux x64 全支持。',
+    feat6_title: '不用联网也能用',
+    feat6_desc: '首次装好后不再需要联网。U 盘版甚至装的时候都不需要网络。',
+    feat7_title: '技能市场持续更新',
+    feat7_desc: 'Pro 用户享受 3 个月技能增量更新，新出的 skill 自动推送。',
+    pricing_title: '选套餐，开始体验',
+    plan_basic: '基础版',
+    plan_pro: 'Pro',
+    plan_basic_price: '¥99',
+    plan_pro_price: '¥199',
+    plan_basic_desc: '装好就能用，省掉 30 分钟折腾',
+    plan_pro_desc: '最受欢迎 — 200+ 技能预装，3 台设备',
+    plan_feat_basic_1: '双击打开就能用',
+    plan_feat_basic_2: 'DeepSeek 模型已配好',
+    plan_feat_basic_3: 'bun + Node.js + ccb',
+    plan_feat_basic_4: '1 台设备',
+    plan_feat_pro_1: '基础版全部内容',
+    plan_feat_pro_2: '200+ 技能全部预装',
+    plan_feat_pro_3: 'gstack 浏览器自动化',
+    plan_feat_pro_4: '社区 MCP 插件',
+    plan_feat_pro_5: '3 个月增量更新',
+    plan_feat_pro_6: '3 台设备',
+    buy_btn: '购买',
+    faq_title: '常见问题',
+    faq1_q: 'Deep Desk 和 Claude Code 是什么关系？',
+    faq1_a: 'Deep Desk 就是 Claude Code 完整功能 + DeepSeek 国内直连。你不需要解决翻墙、海外手机号、命令行配置这些麻烦——装好打开浏览器就能用，和 Claude Code 官方体验完全一致。',
+    faq2_q: '需要记命令吗？怎么用？',
+    faq2_a: '不需要。装好后电脑会自动打开一个聊天页面，像微信一样打字就能和 AI 对话。同时可以聊好几个话题，聊完记录自动保存。你也可以在终端输入 ccb 用键盘操作模式。',
+    faq3_q: '我还是需要自己注册 DeepSeek 吗？',
+    faq3_a: '是的，需要你自己的 DeepSeek API key。不过不用担心——DeepSeek 注册只需手机号，免费额度够用很久，安装时会一步一步引导你完成。你要做的只有：打开网页 → 手机注册 → 复制粘贴 key。',
+    faq4_q: '买了能用多久？',
+    faq4_a: '基础版和 Pro 版都是一次购买、永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。',
+    faq5_q: '能在几台电脑上用？',
+    faq5_a: '基础版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。',
+    faq6_q: 'Windows 能用吗？',
+    faq6_a: '能。Windows 10/11 的 x64 和 ARM64 都支持，双击 install.bat 就能装。',
+    modal_desc: '支付后获得 License Key + DeepSeek 注册指引。支持支付宝 / 微信支付。',
+    modal_pay: '前往支付',
+    modal_cancel: '取消',
+    modal_success: '支付成功！你的 License Key：',
+    modal_after: '复制以下命令到终端完成安装：',
+    modal_note: 'License Key 已发送到你的邮箱。激活绑定设备后不可转让。',
+  },
+  en: {
+    nav_skills: 'Skills',
+    nav_home: 'Deep Desk',
+    badge: 'Powered by DeepSeek',
+    hero_h1: 'Run <em>Claude Code</em> on DeepSeek<br>No VPN. No hassle.',
+    hero_sub: 'Full Claude Code experience, powered by DeepSeek. Install in 30 seconds — no VPN, no overseas account, no command-line config.',
+    pain1: 'Claude account (overseas phone)',
+    pain2: 'VPN + geo-bypass',
+    pain3: 'Complex setup',
+    tab_mac: 'macOS',
+    tab_win: 'Windows',
+    tab_linux: 'Linux',
+    download_btn: 'Download Deep Desk',
+    download_hint_mac: 'macOS · Double-click to install',
+    download_hint_win: 'Windows 10/11 · Double-click to install',
+    download_hint_linux: 'Linux x64 · Run in terminal',
+    download_after: 'Download → Double-click → Browser opens → Start chatting',
+    dev_title: 'Developers / CLI install',
+    steps_title: '3 Steps',
+    step1_title: 'Buy License',
+    step1_desc: 'Pick a plan, pay, get your activation code',
+    step2_title: 'Paste Command',
+    step2_desc: 'Copy the install command to your terminal',
+    step3_title: 'Start Using',
+    step3_desc: 'Browser opens automatically — start chatting',
+    vs_title: 'Without Deep Desk vs With Deep Desk',
+    vs_before: 'The Hard Way',
+    vs_after: 'With Deep Desk',
+    vs_b1: 'Search: how to install Claude Code',
+    vs_b2: 'Register Claude (needs overseas phone)',
+    vs_b3: 'Set up VPN to reach Anthropic',
+    vs_b4: 'Install bun / Node.js manually',
+    vs_b5: 'Configure ANTHROPIC_BASE_URL',
+    vs_b6: 'Edit settings.json / .zshrc',
+    vs_b7: 'Debug error after error',
+    vs_b8: 'Time wasted: 30-60 minutes',
+    vs_a1: 'Copy & paste one command',
+    vs_a2: 'Press Enter, wait 30 seconds',
+    vs_a3: 'Browser opens — you\'re ready',
+    vs_a4: 'DeepSeek models pre-configured',
+    vs_a5: '200+ skills pre-installed',
+    vs_a6: 'Shell environment ready',
+    vs_a7: 'Errors? None.',
+    vs_a8: 'Save time and frustration',
+    ds_title: 'Get a DeepSeek API Key in 2 Minutes',
+    ds_sub: 'Deep Desk runs on DeepSeek. Sign up with just a phone number — new users get free tokens.',
+    ds_step1_title: 'Go to signup page',
+    ds_step1_url: 'platform.deepseek.com',
+    ds_step1_desc: 'Open in browser, click "Sign Up", enter your phone number, verify with SMS. No ID verification needed.',
+    ds_step2_title: 'Create an API Key',
+    ds_step2_desc: 'After login, click "API Keys" on the left → "Create API Key" → Copy the generated key (format: sk-xxx...).',
+    ds_step3_title: 'Paste into terminal',
+    ds_step3_desc: 'The installer will ask you to "Paste API key" — paste your sk-xxx key and press Enter. Done!',
+    ds_tip: 'How long does the free quota last?',
+    ds_tip_desc: 'DeepSeek gives new users free tokens — enough for 1-2 weeks of daily coding use. Top up starts at ¥10 (~$1.40).',
+    feat_title: 'What\'s Inside Deep Desk',
+    feat1_title: 'Chat in Your Browser',
+    feat1_desc: 'A clean chat interface opens automatically after install. Type like you\'re messaging — multiple conversations, auto-saved history.',
+    feat2_title: 'DeepSeek Models Built-in',
+    feat2_desc: 'deepseek-v4-pro + deepseek-v4-flash dual-model ready. Switch between them without touching any config file.',
+    feat3_title: '30-Second Install',
+    feat3_desc: 'From zero to running with one command. All dependencies auto-installed — you don\'t need to configure anything.',
+    feat4_title: '200+ Skills Included',
+    feat4_desc: 'Frontend, backend, testing, security, DevOps — skills for every domain pre-installed and ready to use.',
+    feat5_title: 'All Platforms',
+    feat5_desc: 'macOS (Intel + Apple Silicon), Windows (x64 + ARM64), Linux x64 — we support them all.',
+    feat6_title: 'Works Offline',
+    feat6_desc: 'After initial setup, no internet needed. The USB edition even installs without a network connection.',
+    feat7_title: 'Skill Store Updates',
+    feat7_desc: 'Pro users get 3 months of skill updates — new skills delivered to you automatically.',
+    pricing_title: 'Choose a Plan',
+    plan_basic: 'Basic',
+    plan_pro: 'Pro',
+    plan_basic_price: '¥99',
+    plan_pro_price: '¥199',
+    plan_basic_desc: 'Ready to use — saves you 30 minutes of setup',
+    plan_pro_desc: 'Most popular — 200+ skills, 3 devices',
+    plan_feat_basic_1: 'Double-click to start',
+    plan_feat_basic_2: 'DeepSeek models pre-configured',
+    plan_feat_basic_3: 'bun + Node.js + ccb',
+    plan_feat_basic_4: '1 device',
+    plan_feat_pro_1: 'Everything in Basic',
+    plan_feat_pro_2: '200+ skills pre-installed',
+    plan_feat_pro_3: 'gstack browser automation',
+    plan_feat_pro_4: 'Community MCP plugins',
+    plan_feat_pro_5: '3 months updates',
+    plan_feat_pro_6: '3 devices',
+    buy_btn: 'Buy Now',
+    faq_title: 'FAQ',
+    faq1_q: 'What\'s the relationship between Deep Desk and Claude Code?',
+    faq1_a: 'Deep Desk is Claude Code + DeepSeek direct access. Same full Claude Code experience — just accessible from China without VPN or overseas accounts.',
+    faq2_q: 'Do I need to memorize commands?',
+    faq2_a: 'No. After install, a chat page opens automatically in your browser. Just type like you\'re messaging — multiple conversations supported, history auto-saved.',
+    faq3_q: 'Do I still need to sign up for DeepSeek?',
+    faq3_a: 'Yes, you need your own DeepSeek API key. Don\'t worry — signing up just takes a phone number, new users get free tokens, and the installer guides you step-by-step. All you do: open website → sign up → copy & paste the key.',
+    faq4_q: 'How long can I use it after purchase?',
+    faq4_a: 'Basic and Pro are one-time purchases — use forever. Deep Desk provides the tools and config; API calls go through your own DeepSeek account (new users typically get free credits).',
+    faq5_q: 'How many computers?',
+    faq5_a: 'Basic: 1 device. Pro: 3 devices. License is bound to your hardware — cannot be copied to other people\'s machines.',
+    faq6_q: 'Does it work on Windows?',
+    faq6_a: 'Yes. Windows 10/11 x64 and ARM64 are fully supported — just double-click install.bat.',
+    modal_desc: 'After payment: License Key + DeepSeek setup guide. Alipay / WeChat Pay supported.',
+    modal_pay: 'Pay Now',
+    modal_cancel: 'Cancel',
+    modal_success: 'Payment successful! Your License Key:',
+    modal_after: 'Copy this command to your terminal to install:',
+    modal_note: 'License Key has been sent to your email. Activation is device-bound and non-transferable.',
+  }
+};
+
+function t(key) {
+  return I18N[LANG]?.[key] || I18N['zh']?.[key] || key;
+}
+
+function switchLang(lang) {
+  LANG = lang;
+  localStorage.setItem('deepdesk_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.textContent.trim().toLowerCase() === lang || (lang === 'zh' && b.textContent.includes('中文'))) b.classList.add('active');
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val && !val.includes('<')) el.textContent = val;
+  });
+  renderI18nContent();
+}
+
+function renderI18nContent() {
+  // Update dynamic content sections
+  document.querySelector('.badge') && (document.querySelector('.badge').textContent = t('badge'));
+  document.querySelector('.hero .subtitle') && (document.querySelector('.hero .subtitle').textContent = t('hero_sub'));
+  document.getElementById('downloadHint') && (document.getElementById('downloadHint').textContent = t('download_hint_mac'));
+  document.querySelector('.after-cmd') && (document.querySelector('.after-cmd').textContent = t('download_after'));
+
+  // Pricing cards
+  const cards = document.querySelectorAll('.price-card');
+  if (cards.length >= 2) {
+    // Basic
+    cards[0].querySelector('.plan-name').textContent = t('plan_basic');
+    cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
+    cards[0].querySelector('.plan-desc').textContent = t('plan_basic_desc');
+    const bfeats = cards[0].querySelectorAll('li');
+    ['plan_feat_basic_1','plan_feat_basic_2','plan_feat_basic_3','plan_feat_basic_4'].forEach((k,i) => { if(bfeats[i]) bfeats[i].textContent = t(k); });
+    // Pro
+    cards[1].querySelector('.plan-name').textContent = t('plan_pro');
+    cards[1].querySelector('.plan-price').innerHTML = t('plan_pro_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
+    cards[1].querySelector('.plan-desc').textContent = t('plan_pro_desc');
+    const pfeats = cards[1].querySelectorAll('li');
+    ['plan_feat_pro_1','plan_feat_pro_2','plan_feat_pro_3','plan_feat_pro_4','plan_feat_pro_5','plan_feat_pro_6'].forEach((k,i) => { if(pfeats[i]) pfeats[i].textContent = t(k); });
+  }
+  // Buy buttons
+  document.querySelectorAll('.buy-btn:not(.outline)').forEach(b => { if(b.tagName === 'BUTTON') b.textContent = t('buy_btn'); });
+  document.querySelectorAll('.buy-btn.outline').forEach(b => { if(b.tagName === 'BUTTON') b.textContent = t('buy_btn'); });
+
+  // Update the h1 (contains HTML so needs innerHTML)
+  const h1 = document.getElementById('heroH1');
+  if (h1) h1.innerHTML = t('hero_h1');
+
+  // Update summary elements
+  const devSummary = document.querySelector('.dev-cmd summary');
+  if (devSummary) devSummary.textContent = t('dev_title');
+
+  // Update how-it-works section
+  const stepCards = document.querySelectorAll('.step-card');
+  if (stepCards.length >= 3) {
+    stepCards[0].querySelector('h3').textContent = t('step1_title');
+    stepCards[0].querySelector('p').textContent = t('step1_desc');
+    stepCards[1].querySelector('h3').textContent = t('step2_title');
+    stepCards[1].querySelector('p').textContent = t('step2_desc');
+    stepCards[2].querySelector('h3').textContent = t('step3_title');
+    stepCards[2].querySelector('p').textContent = t('step3_desc');
+  }
+
+  // Update before/after
+  const baCards = document.querySelectorAll('.ba-card');
+  if (baCards.length >= 2) {
+    // Before card
+    const bItems = baCards[0].querySelectorAll('li');
+    for (let i = 0; i < bItems.length && i < 8; i++) {
+      bItems[i].textContent = t('vs_b' + (i+1));
+    }
+    // After card
+    const aItems = baCards[1].querySelectorAll('li');
+    for (let i = 0; i < aItems.length && i < 8; i++) {
+      aItems[i].textContent = t('vs_a' + (i+1));
+    }
+  }
+
+  // Update DeepSeek guide
+  const dsTitle = document.querySelector('#deepseek-guide h2');
+  if (dsTitle) dsTitle.textContent = t('ds_title');
+  const dsCards = document.querySelectorAll('#deepseek-guide .step-card');
+  if (dsCards.length >= 3) {
+    dsCards[0].querySelector('h3').textContent = t('ds_step1_title');
+    dsCards[0].querySelectorAll('p')[1].textContent = t('ds_step1_desc');
+    dsCards[1].querySelector('h3').textContent = t('ds_step2_title');
+    dsCards[1].querySelectorAll('p')[1] ? dsCards[1].querySelectorAll('p')[1].textContent = t('ds_step2_desc') : null;
+    dsCards[2].querySelector('h3').textContent = t('ds_step3_title');
+    dsCards[2].querySelectorAll('p')[1] ? dsCards[2].querySelectorAll('p')[1].textContent = t('ds_step3_desc') : null;
+  }
+  const dsSub = document.querySelector('#deepseek-guide p');
+  if (dsSub) dsSub.textContent = t('ds_sub');
+  const dsTip = document.querySelector('#deepseek-guide strong');
+  if (dsTip) dsTip.textContent = t('ds_tip');
+
+  // Update features
+  const featTitle = document.querySelector('.section:nth-of-type(6) h2');
+  if (featTitle) featTitle.textContent = t('feat_title');
+  const featCards = document.querySelectorAll('.feature-card');
+  if (featCards.length >= 7) {
+    const titles = ['feat1','feat2','feat3','feat4','feat5','feat6','feat7'];
+    titles.forEach((k, i) => {
+      if (featCards[i]) {
+        featCards[i].querySelector('h3').textContent = t(k + '_title');
+        featCards[i].querySelector('p').textContent = t(k + '_desc');
+      }
+    });
+  }
+
+  // Update FAQ
+  const faqTitle = document.querySelector('.section:last-of-type h2');
+  if (faqTitle && faqTitle.textContent.includes('常见')) faqTitle.textContent = t('faq_title');
+  const faqItems = document.querySelectorAll('.faq-item');
+  if (faqItems.length >= 6) {
+    for (let i = 0; i < 6; i++) {
+      faqItems[i].querySelector('h4').textContent = t('faq' + (i+1) + '_q');
+      faqItems[i].querySelector('p').textContent = t('faq' + (i+1) + '_a');
+    }
+  }
+
+  // Update vs title and headings
+  const vsTitle = document.querySelector('.before-after')?.parentElement?.querySelector('h2');
+  if (vsTitle) vsTitle.textContent = t('vs_title');
+  const baHeadings = document.querySelectorAll('.ba-card h3');
+  if (baHeadings[0]) baHeadings[0].textContent = t('vs_before');
+  if (baHeadings[1]) baHeadings[1].textContent = t('vs_after');
+
+  // Update pricing title
+  const pricingTitle = document.querySelector('#pricing h2');
+  if (pricingTitle) pricingTitle.textContent = t('pricing_title');
+
+  // Update section title for steps
+  const stepsTitle = document.querySelector('.section:nth-of-type(2) h2');
+  if (stepsTitle) stepsTitle.textContent = t('steps_title');
+
+  // Update modal
+  const modalDesc = document.querySelector('.modal p');
+  if (modalDesc) modalDesc.textContent = t('modal_desc');
+  const payBtn = document.querySelector('.pay-btn');
+  if (payBtn) payBtn.textContent = t('modal_pay');
+  const cancelBtn = document.querySelector('.cancel-btn');
+  if (cancelBtn) cancelBtn.textContent = t('modal_cancel');
+}
+
+// Init i18n on load
+document.addEventListener('DOMContentLoaded', () => {
+  switchLang(LANG);
+});
+
 const PLANS = {
   'basic': { name:'基础版', price:'¥99',  desc:'装好就能用，省掉 30 分钟折腾', keyPrefix:'CCB-BASIC' },
   'pro':   { name:'Pro',   price:'¥199', desc:'最受欢迎 — 200+ 技能预装，3 台设备', keyPrefix:'CCB-PRO' },
