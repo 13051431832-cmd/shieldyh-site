@@ -665,11 +665,11 @@
   </div>
   <div class="faq-item">
     <h4>买了能用多久？</h4>
-    <p>基础版和 Pro 版都是一次购买、永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。</p>
+    <p>免费版永久免费，Pro 版一次购买永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。</p>
   </div>
   <div class="faq-item">
     <h4>能在几台电脑上用？</h4>
-    <p>基础版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。</p>
+    <p>免费版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。</p>
   </div>
   <div class="faq-item">
     <h4>Windows 能用吗？</h4>
@@ -805,9 +805,9 @@ const I18N = {
     faq3_q: '我还是需要自己注册 DeepSeek 吗？',
     faq3_a: '是的，需要你自己的 DeepSeek API key。不过不用担心——DeepSeek 注册只需手机号，免费额度够用很久，安装时会一步一步引导你完成。你要做的只有：打开网页 → 手机注册 → 复制粘贴 key。',
     faq4_q: '买了能用多久？',
-    faq4_a: '基础版和 Pro 版都是一次购买、永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。',
+    faq4_a: '免费版永久免费，Pro 版一次购买永久使用。Deep Desk 只是工具和配置——API 调用走你自己的 DeepSeek 账户，费用由 DeepSeek 直接收取（新用户通常有免费额度）。',
     faq5_q: '能在几台电脑上用？',
-    faq5_a: '基础版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。',
+    faq5_a: '免费版 1 台，Pro 版 3 台。License 绑定设备硬件指纹，不能无限复制给其他人。',
     faq6_q: 'Windows 能用吗？',
     faq6_a: '能。Windows 10/11 的 x64 和 ARM64 都支持，双击 install.bat 就能装。',
     modal_desc: '支付后获得 License Key + DeepSeek 注册指引。支持支付宝 / 微信支付。',
@@ -958,6 +958,14 @@ function renderI18nContent() {
   if (cards.length >= 2) {
     // Basic
     cards[0].querySelector('.plan-name').textContent = t('plan_basic');
+    // Handle free tier price
+    if (t('plan_basic_price') === '免费' || t('plan_basic_price') === 'Free') {
+      cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price');
+      cards[0].querySelector('.buy-btn').textContent = LANG === 'zh' ? '免费安装' : 'Install Free';
+    } else {
+      cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
+    }
+    
     cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
     cards[0].querySelector('.plan-desc').textContent = t('plan_basic_desc');
     const bfeats = cards[0].querySelectorAll('li');
