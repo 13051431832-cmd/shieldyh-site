@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Desk — DeepSeek 在工作和生活中的应用</title>
+<style>
+  :root {
+    --bg: #0d0d0d; --surface: #1a1a1a; --surface-hover: #252525;
+    --border: #2a2a2a; --text: #e0e0e0; --text-dim: #999;
+    --accent: #5c9ce6; --accent-glow: #7ab8f5; --green: #5ecb90;
+    --font: "SF Mono", "Fira Code", "JetBrains Mono", "Menlo", monospace;
+    --radius: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.7; min-height: 100vh; }
+  header {
+    border-bottom: 1px solid var(--border); padding: 20px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; position: sticky; top: 0;
+    background: var(--bg); z-index: 10; backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 1.2rem; font-weight: 700; color: var(--accent); cursor: pointer; }
+  .logo span { color: var(--text-dim); font-weight: 400; }
+  .top-nav { display: flex; gap: 4px; }
+  .nav-item { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; padding: 6px 16px; border-radius: 6px; transition: all 0.15s; }
+  .nav-item:hover { color: var(--text); background: var(--surface); }
+  .nav-item.active { color: var(--accent); background: var(--surface); }
+
+  .hero {
+    text-align: center; padding: 80px 40px 60px; border-bottom: 1px solid var(--border);
+  }
+  .hero h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); color: var(--accent); margin-bottom: 12px; }
+  .hero p { color: var(--text-dim); font-size: 1.05rem; max-width: 700px; margin: 0 auto; }
+
+  .section { padding: 60px 40px; max-width: 1000px; margin: 0 auto; }
+  .section h2 { color: var(--accent); font-size: 1.3rem; margin-bottom: 32px; text-align: center; }
+
+  /* Cards */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card .icon { font-size: 1.5rem; margin-bottom: 12px; }
+  .card h3 { color: var(--text); font-size: 1rem; margin-bottom: 8px; }
+  .card p { color: var(--text-dim); font-size: 0.85rem; }
+
+  /* How-to steps */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; text-align: center;
+  }
+  .step-num { width: 36px; height: 36px; background: var(--accent); color: #000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 12px; }
+  .step h3 { color: var(--text); font-size: 1rem; margin-bottom: 6px; }
+  .step p { color: var(--text-dim); font-size: 0.85rem; }
+
+  .quote {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin: 20px 0; font-style: italic; color: var(--text-dim);
+  }
+  .quote::before { content: "\201C"; color: var(--accent); font-size: 2rem; line-height: 0; vertical-align: -0.3em; margin-right: 4px; }
+
+  .cta { text-align: center; padding: 60px 40px; border-top: 1px solid var(--border); }
+  .cta h2 { color: var(--accent); margin-bottom: 16px; }
+  .cta p { color: var(--text-dim); margin-bottom: 24px; }
+  .cta a {
+    display: inline-block; background: var(--accent); color: #000;
+    padding: 14px 40px; border-radius: var(--radius); text-decoration: none;
+    font-weight: 700; font-size: 1rem; transition: background 0.15s;
+  }
+  .cta a:hover { background: var(--accent-glow); }
+
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    .hero { padding: 40px 16px 40px; }
+    .section { padding: 40px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="window.location='/'">Deep <span>Desk</span></div>
+  <nav class="top-nav">
+    <a class="nav-item" href="/">Deep Desk</a>
+    <a class="nav-item active" href="/use-cases.html">应用场景</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>DeepSeek 能为你做什么？</h1>
+  <p>Deep Desk 让你在电脑上直接用 DeepSeek —— 工作提效、学习辅助、内容创作，一台电脑全搞定。</p>
+</section>
+
+<!-- Work -->
+<section class="section">
+  <h2>工作场景</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon">💻</div>
+      <h3>写代码 & 调试</h3>
+      <p>告诉 Deep Desk 你要做什么功能，它自动写代码、修 bug、解释报错。支持读你整个项目文件夹，理解上下文。</p>
+      <div class="quote">帮我把这个 Python 脚本里的数据导出改成 CSV 格式</div>
+    </div>
+    <div class="card">
+      <div class="icon">📧</div>
+      <h3>写邮件 & 文档</h3>
+      <p>给一句话，它帮你扩写成正式邮件、周报、会议纪要。投递给客户的方案也能润色。</p>
+      <div class="quote">帮我写一封英文邮件给客户，确认下周二的会议时间</div>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h3>数据分析 & Excel</h3>
+      <p>上传表格让它分析趋势、清洗数据、写公式。不用学 Excel 高级功能，用中文描述就行。</p>
+      <div class="quote">分析这个销售表格，找出第三季度销量下降的原因</div>
+    </div>
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h3>研究调研</h3>
+      <p>让它帮你搜集资料、提炼要点、做竞品分析。一次性读几十个网页，给你一个完整摘要。</p>
+      <div class="quote">调研国内 AI 编程工具市场，给我一份竞品分析报告</div>
+    </div>
+    <div class="card">
+      <div class="icon">🌐</div>
+      <h3>翻译 & 本地化</h3>
+      <p>中英互译、多语言翻译、技术文档本地化。比传统翻译软件更懂上下文和术语。</p>
+      <div class="quote">把这份产品手册翻译成日语，保持技术术语一致</div>
+    </div>
+    <div class="card">
+      <div class="icon">⚙️</div>
+      <h3>自动化脚本</h3>
+      <p>批量重命名文件、定时备份、自动整理文件夹——说需求，它写脚本，可一键执行。</p>
+      <div class="quote">写一个脚本，每天自动把我桌面的截图按日期整理到文件夹</div>
+    </div>
+  </div>
+</section>
+
+<!-- Life -->
+<section class="section" style="background:var(--surface);max-width:none;padding:60px 40px;">
+  <div style="max-width:1000px;margin:0 auto;">
+    <h2>生活场景</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">📚</div>
+        <h3>学习新知识</h3>
+        <p>学编程、学外语、考研复习——像有一位私教随时解答。可以追问到彻底理解为止。</p>
+        <div class="quote">用通俗的语言给我解释什么是机器学习，并举一个生活中的例子</div>
+      </div>
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>写作助手</h3>
+        <p>写公众号文章、小红书笔记、短视频脚本。你给主题和风格，它帮你出第一稿。</p>
+        <div class="quote">写一篇小红书种草笔记，介绍这个新买的机械键盘</div>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>创意灵感</h3>
+        <p>想名字、想 slogan、想活动方案——卡壳的时候丢给它，5 秒出 10 个想法。</p>
+        <div class="quote">帮我给一个新的果汁品牌起 10 个名字，要有"天然、活力"的感觉</div>
+      </div>
+      <div class="card">
+        <div class="icon">🧑‍⚖️</div>
+        <h3>法律 & 合同参考</h3>
+        <p>租房合同、劳务协议，让它帮你看看有没有坑。不能替代律师，但能帮你发现常见问题。</p>
+        <div class="quote">帮我审一下这份租房合同，看看有没有对我不利的条款</div>
+      </div>
+      <div class="card">
+        <div class="icon">🏃</div>
+        <h3>健康 & 健身</h3>
+        <p>定制健身计划、分析饮食结构、解释体检报告里的指标。科学建议非医疗诊断。</p>
+        <div class="quote">根据我 180cm / 78kg 的情况，给我一个三个月的增肌减脂计划</div>
+      </div>
+      <div class="card">
+        <div class="icon">👶</div>
+        <h3>亲子教育</h3>
+        <p>给孩子出数学题、解释科学现象、设计小实验。用孩子能懂的语言回答"为什么天空是蓝的"。</p>
+        <div class="quote">给 8 岁孩子解释为什么会有四季，要简单有趣</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How to use -->
+<section class="section">
+  <h2>怎么用 Deep Desk</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>下载安装</h3>
+      <p>访问 shieldyh.com，复制免费安装命令到终端，回车。30 秒装好。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>注册 DeepSeek</h3>
+      <p>在 platform.deepseek.com 用手机号注册，创建 API Key。安装时粘贴进去。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>打开就用</h3>
+      <p>装好自动跳出聊天页面，打字描述你的需求。换个问法接着聊，记录自动保存。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>用起来</h3>
+      <p>拖文件给它读、让它改代码、帮你写文档。像跟同事讨论一样自然。</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>免费安装，现在就试试</h2>
+  <p>打开终端，复制粘贴，30 秒后你桌面就有了一个全能的 AI 助手。</p>
+  <a href="/">安装 Deep Desk</a>
+</section>
+
+</body>
+</html>
