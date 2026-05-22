@@ -636,14 +636,15 @@
       <div class="plan-price">¥199<sub>/次</sub></div>
       <div class="plan-desc">最受欢迎 — 200+技能，3台设备</div>
       <ul class="plan-features">
-        <li>基础版全部内容</li>
+        <li>免费版全部功能</li>
         <li>200+ 技能全部预装</li>
         <li>gstack 浏览器自动化</li>
         <li>社区 MCP 插件</li>
         <li>3 个月增量更新</li>
         <li>3 台设备</li>
+        <li>加入会员沟通群</li>
       </ul>
-      <button class="buy-btn" onclick="openPurchase('pro')">购买</button>
+      <button class="buy-btn" onclick="openPurchase('pro')">获取 Pro</button>
     </div>
   </div>
 </section>
@@ -677,28 +678,21 @@
   </div>
 </section>
 
-<!-- Purchase Modal -->
+<!-- Pro Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h3 id="modalPlanName">Pro</h3>
-    <div class="price-display" id="modalPrice">¥199</div>
-    <div class="plan-name-display" id="modalDesc">单次安装授权</div>
-    <p style="color:var(--text-dim);margin-bottom:24px;font-size:0.85rem">
-      支付后获得 License Key + DeepSeek 注册指引。支持支付宝 / 微信支付。
+    <h3>获取 Deep Desk Pro</h3>
+    <div class="price-display">¥199</div>
+    <div class="plan-name-display">永久授权 · 200+ 技能 · 3 台设备 · 会员群</div>
+    <p style="color:var(--text-dim);margin-bottom:16px;font-size:0.85rem">
+      微信转账 ¥199，拉你进专属会员群，发送 License Key 和安装指引。
     </p>
-    <button class="pay-btn" onclick="simulatePayment()">前往支付</button>
-    <button class="cancel-btn" onclick="closeModal()">取消</button>
-    <div class="result-box" id="resultBox">
-      <p style="color:var(--green);margin-bottom:12px">支付成功！你的 License Key：</p>
-      <div class="key" id="licenseKey">CCB-XXXXXXXXXXXX</div>
-      <p style="color:var(--text-dim);margin-bottom:8px;font-size:0.8rem">复制以下命令到终端完成安装：</p>
-      <div class="install-cmd" id="licenseCmd" onclick="copyCmd(this.textContent)">
-        curl -fsSL https://ccb-store.oss-cn-hangzhou.aliyuncs.com/install.sh | bash
-      </div>
-      <p style="color:var(--text-dim);font-size:0.75rem">
-        License Key 已发送到你的邮箱。激活绑定设备后不可转让。
-      </p>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:20px;text-align:left">
+      <p style="color:var(--text);font-size:0.9rem;margin-bottom:8px">添加微信：</p>
+      <p style="color:var(--accent);font-size:1.1rem;font-weight:700;margin-bottom:4px">（你的微信号）</p>
+      <p style="color:var(--text-dim);font-size:0.8rem">转账时备注"Deep Desk Pro"</p>
     </div>
+    <button class="cancel-btn" onclick="closeModal()">关闭</button>
   </div>
 </div>
 
@@ -1100,7 +1094,6 @@ function openPurchase(id) {
   document.getElementById('modalPlanName').textContent = p.name;
   document.getElementById('modalPrice').textContent = p.price;
   document.getElementById('modalDesc').textContent = p.desc;
-  document.getElementById('resultBox').classList.remove('show');
   document.getElementById('modalOverlay').classList.add('open');
   document.getElementById('modalOverlay').dataset.planId = id;
 }
@@ -1109,15 +1102,7 @@ function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
 }
 
-function simulatePayment() {
-  const p = PLANS[document.getElementById('modalOverlay').dataset.planId];
-  const rand = Array.from({length:24}, ()=>'0123456789ABCDEF'[Math.floor(Math.random()*16)]).join('');
-  const key = p.keyPrefix + '-' + rand;
-  document.getElementById('licenseKey').textContent = key;
-  document.getElementById('licenseCmd').textContent =
-    'DEEPDESK_KEY=' + key + ' curl -fsSL https://ccb-store.oss-cn-hangzhou.aliyuncs.com/install.sh | bash';
-  document.getElementById('resultBox').classList.add('show');
-}
+
 
 function switchPlatform(plat) {
   document.querySelectorAll('.plat-tab').forEach(b => b.classList.remove('active'));
