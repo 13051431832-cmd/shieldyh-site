@@ -620,7 +620,7 @@
   <h2>开始体验</h2>
   <div class="pricing-grid">
     <div class="price-card">
-      <div class="plan-name"></div>
+      <div class="plan-name">基础工具</div>
       <div class="plan-price">免费</div>
       <div class="plan-desc">带 Web 界面，永久免费</div>
       <ul class="plan-features">
@@ -632,11 +632,11 @@
       <button class="buy-btn outline" onclick="window.open('https://ccb-store.oss-cn-hangzhou.aliyuncs.com/install.sh')">免费获取</button>
     </div>
     <div class="price-card featured">
-      <div class="plan-name">Pro</div>
+      <div class="plan-name">加强版</div>
       <div class="plan-price"></div>
       <div class="plan-desc">最受欢迎 — 200+技能，3台设备</div>
       <ul class="plan-features">
-        <li>免费版全部功能</li>
+        <li>全部功能</li>
         <li>200+ 技能全部预装</li>
         <li>gstack 浏览器自动化</li>
         <li>社区 MCP 插件</li>
@@ -681,7 +681,7 @@
 <!-- Pro Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h3>获取 Deep Desk Pro</h3>
+    <h3>获取 Deep Desk 加强版</h3>
     <div class="price-display" style="display:none"></div>
     <div class="plan-name-display">永久授权 · 200+ 技能 · 3 台设备 · 会员群</div>
     <p style="color:var(--text-dim);margin-bottom:16px;font-size:0.85rem">
@@ -776,8 +776,8 @@ const I18N = {
     feat7_title: '技能市场持续更新',
     feat7_desc: 'Pro 用户享受 3 个月技能增量更新，新出的 skill 自动推送。',
     pricing_title: '开始体验',
-    plan_basic: '',
-    plan_pro: 'Pro',
+    plan_basic: '基础工具',
+    plan_pro: '加强版',
     plan_basic_price: '免费',
     plan_pro_price: '',
     plan_basic_desc: '带 Web 界面，永久免费',
@@ -786,7 +786,7 @@ const I18N = {
     plan_feat_basic_2: 'DeepSeek 模型已配好',
     plan_feat_basic_3: 'bun + Node.js + ccb',
     plan_feat_basic_4: '1 台设备',
-    plan_feat_pro_1: '免费版全部功能',
+    plan_feat_pro_1: '全部功能',
     plan_feat_pro_2: '200+ 技能全部预装',
     plan_feat_pro_3: 'gstack 浏览器自动化',
     plan_feat_pro_4: '社区 MCP 插件',
@@ -886,8 +886,8 @@ const I18N = {
     feat7_title: 'Skill Store Updates',
     feat7_desc: 'Pro users get 3 months of skill updates — new skills delivered to you automatically.',
     pricing_title: 'Choose a Plan',
-    plan_basic: '',
-    plan_pro: 'Pro',
+    plan_basic: '基础工具',
+    plan_pro: '加强版',
     plan_basic_price: '免费',
     plan_pro_price: '',
     plan_basic_desc: 'Web UI included — free forever',
@@ -1085,8 +1085,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const PLANS = {
-  'basic': { name:'', price:'免费', desc:'带 Web 界面，永久免费', keyPrefix:'CCB-BASIC' },
-  'pro':   { name:'Pro',   price:'¥199', desc:'最受欢迎 — 200+ 技能预装，3 台设备', keyPrefix:'CCB-PRO' },
+  'basic': { name:'基础工具', price:'免费', desc:'带 Web 界面，永久免费', keyPrefix:'CCB-BASIC' },
+  'pro':   { name:'加强版',   price:'¥199', desc:'最受欢迎 — 200+ 技能预装，3 台设备', keyPrefix:'CCB-PRO' },
 };
 
 function openPurchase(id) {
