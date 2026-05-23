@@ -904,8 +904,7 @@ const I18N = {
     faq2_a: 'No. After install, a chat page opens automatically in your browser. Just type like you\'re messaging — multiple conversations supported, history auto-saved.',
     faq3_q: 'Do I still need to sign up for DeepSeek?',
     faq3_a: 'Yes, you need your own DeepSeek API key. Don\'t worry — signing up just takes a phone number, new users get free tokens, and the installer guides you step-by-step. All you do: open website → sign up → copy & paste the key.',
-        faq4_a: 'Basic and Pro are one-time purchases — use forever. Deep Desk provides the tools and config; API calls go through your own DeepSeek account (new users typically get free credits).',
-    faq5_q: 'How many computers?',
+        faq5_q: 'How many computers?',
     faq5_a: 'Basic: 1 device. Pro: 3 devices. License is bound to your hardware — cannot be copied to other people\'s machines.',
     faq6_q: 'Does it work on Windows?',
     faq6_a: 'Yes. Windows 10/11 x64 and ARM64 are fully supported — just double-click install.bat.',
@@ -1043,8 +1042,8 @@ function renderI18nContent() {
   const faqTitle = document.querySelector('.section:last-of-type h2');
   if (faqTitle && faqTitle.textContent.includes('常见')) faqTitle.textContent = t('faq_title');
   const faqItems = document.querySelectorAll('.faq-item');
-  if (faqItems.length >= 6) {
-    for (let i = 0; i < 6; i++) {
+  if (faqItems.length >= 5) {
+    for (let i = 0; i < 5; i++) {
       faqItems[i].querySelector('h4').textContent = t('faq' + (i+1) + '_q');
       faqItems[i].querySelector('p').textContent = t('faq' + (i+1) + '_a');
     }
