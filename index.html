@@ -926,7 +926,11 @@ const I18N = {
 };
 
 function t(key) {
-  return I18N[LANG]?.[key] || I18N['zh']?.[key] || key;
+  var v = I18N[LANG]?.[key];
+  if (v !== undefined) return v;
+  v = I18N['zh']?.[key];
+  if (v !== undefined) return v;
+  return key;
 }
 
 function switchLang(lang) {
@@ -1122,4 +1126,3 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 
 </body>
 </html>
-<!-- build: 1779509067 -->
