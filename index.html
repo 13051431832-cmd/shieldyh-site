@@ -617,7 +617,7 @@
 
 <!-- Pricing -->
 <section class="section" id="pricing">
-  <h2>选套餐，开始体验</h2>
+  <h2>开始体验</h2>
   <div class="pricing-grid">
     <div class="price-card">
       <div class="plan-name">免费版</div>
@@ -775,7 +775,7 @@ const I18N = {
     feat6_desc: '首次装好后不再需要联网。U 盘版甚至装的时候都不需要网络。',
     feat7_title: '技能市场持续更新',
     feat7_desc: 'Pro 用户享受 3 个月技能增量更新，新出的 skill 自动推送。',
-    pricing_title: '选套餐，开始体验',
+    pricing_title: '开始体验',
     plan_basic: '免费版',
     plan_pro: 'Pro',
     plan_basic_price: '免费',
@@ -959,7 +959,7 @@ function renderI18nContent() {
     // Handle free tier price
     if (t('plan_basic_price') === '免费' || t('plan_basic_price') === 'Free') {
       cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price');
-      cards[0].querySelector('.buy-btn').textContent = LANG === 'zh' ? '免费安装' : 'Install Free';
+      cards[0].querySelector('.buy-btn').textContent = LANG === 'zh' ? '免费获取' : 'Get Free';
     } else {
       cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
     }
