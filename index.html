@@ -608,10 +608,6 @@
       <p>首次激活后无需联网。U 盘版甚至装的时候都不需要网络。</p>
     </div>
     <div class="feature-card">
-      <div class="icon">🔄</div>
-      <h3>技能市场持续更新</h3>
-      <p>Pro 用户享受 3 个月技能增量更新，新出的 skill 自动推送到你的机器。</p>
-    </div>
   </div>
 </section>
 
@@ -1025,7 +1021,7 @@ function renderI18nContent() {
   if (featTitle) featTitle.textContent = t('feat_title');
   const featCards = document.querySelectorAll('.feature-card');
   if (featCards.length >= 7) {
-    const titles = ['feat1','feat2','feat3','feat4','feat5','feat6','feat7'];
+    const titles = ['feat1','feat2','feat3','feat4','feat5','feat6'];
     titles.forEach((k, i) => {
       if (featCards[i]) {
         featCards[i].querySelector('h3').textContent = t(k + '_title');
