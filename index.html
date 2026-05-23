@@ -963,14 +963,12 @@ function renderI18nContent() {
     } else {
       cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
     }
-    
-    cards[0].querySelector('.plan-price').innerHTML = t('plan_basic_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
     cards[0].querySelector('.plan-desc').textContent = t('plan_basic_desc');
     const bfeats = cards[0].querySelectorAll('li');
     ['plan_feat_basic_1','plan_feat_basic_2','plan_feat_basic_3','plan_feat_basic_4'].forEach((k,i) => { if(bfeats[i]) bfeats[i].textContent = t(k); });
     // Pro
     cards[1].querySelector('.plan-name').textContent = t('plan_pro');
-    cards[1].querySelector('.plan-price').innerHTML = t('plan_pro_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>';
+    cards[1].querySelector('.plan-price').innerHTML = t('plan_pro_price') ? t('plan_pro_price') + '<sub>' + (LANG === 'zh' ? '/次' : '') + '</sub>' : '';
     cards[1].querySelector('.plan-desc').textContent = t('plan_pro_desc');
     const pfeats = cards[1].querySelectorAll('li');
     ['plan_feat_pro_1','plan_feat_pro_2','plan_feat_pro_3','plan_feat_pro_4','plan_feat_pro_5','plan_feat_pro_6'].forEach((k,i) => { if(pfeats[i]) pfeats[i].textContent = t(k); });
