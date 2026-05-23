@@ -786,7 +786,7 @@ const I18N = {
     plan_feat_basic_2: 'DeepSeek 模型已配好',
     plan_feat_basic_3: 'bun + Node.js + ccb',
     plan_feat_basic_4: '1 台设备',
-    plan_feat_pro_1: '基础版全部内容',
+    plan_feat_pro_1: '免费版全部功能',
     plan_feat_pro_2: '200+ 技能全部预装',
     plan_feat_pro_3: 'gstack 浏览器自动化',
     plan_feat_pro_4: '社区 MCP 插件',
@@ -896,7 +896,7 @@ const I18N = {
     plan_feat_basic_2: 'DeepSeek models pre-configured',
     plan_feat_basic_3: 'bun + Node.js + ccb',
     plan_feat_basic_4: '1 device',
-    plan_feat_pro_1: 'Everything in Basic',
+    plan_feat_pro_1: 'Everything in Free',
     plan_feat_pro_2: '200+ skills pre-installed',
     plan_feat_pro_3: 'gstack browser automation',
     plan_feat_pro_4: 'Community MCP plugins',
@@ -976,8 +976,8 @@ function renderI18nContent() {
     ['plan_feat_pro_1','plan_feat_pro_2','plan_feat_pro_3','plan_feat_pro_4','plan_feat_pro_5','plan_feat_pro_6'].forEach((k,i) => { if(pfeats[i]) pfeats[i].textContent = t(k); });
   }
   // Buy buttons
-  document.querySelectorAll('.buy-btn:not(.outline)').forEach(b => { if(b.tagName === 'BUTTON') b.textContent = t('buy_btn'); });
-  document.querySelectorAll('.buy-btn.outline').forEach(b => { if(b.tagName === 'BUTTON') b.textContent = t('buy_btn'); });
+  document.querySelectorAll('.buy-btn:not(.outline)').forEach(b => { if(b.tagName === 'BUTTON') b.textContent = LANG === 'zh' ? '获取 Pro' : 'Get Pro'; });
+  // Free tier button set in pricing block above
 
   // Update the h1 (contains HTML so needs innerHTML)
   const h1 = document.getElementById('heroH1');
@@ -1085,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const PLANS = {
-  'basic': { name:'基础版', price:'¥99',  desc:'装好就能用，省掉 30 分钟折腾', keyPrefix:'CCB-BASIC' },
+  'basic': { name:'免费版', price:'免费', desc:'带 Web 界面，永久免费', keyPrefix:'CCB-BASIC' },
   'pro':   { name:'Pro',   price:'¥199', desc:'最受欢迎 — 200+ 技能预装，3 台设备', keyPrefix:'CCB-PRO' },
 };
 
