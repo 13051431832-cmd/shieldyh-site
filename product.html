@@ -57,6 +57,28 @@
   .nav-item:hover { color: var(--text); background: var(--surface); }
   .nav-item.active { color: var(--accent); background: var(--surface); }
 
+  /* ── Dropdown nav ──────── */
+  .nav-dropdown { position: relative; display: inline-flex; }
+  .nav-dropdown-btn {
+    color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+    padding: 6px 16px; border-radius: 6px; transition: all 0.15s;
+    background: none; border: none; font-family: var(--font); cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .nav-dropdown-btn:hover { color: var(--text); background: var(--surface); }
+  .nav-dropdown-btn .arrow { font-size: 0.7rem; margin-left: 2px; }
+  .nav-dropdown-menu {
+    display: none; position: absolute; top: 100%; left: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); min-width: 200px; padding: 4px; z-index: 20;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+  .nav-dropdown-menu a {
+    display: block; color: var(--text-dim); text-decoration: none;
+    padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; transition: all 0.15s;
+  }
+  .nav-dropdown-menu a:hover { color: var(--text); background: var(--surface-hover); }
+
   /* ── Hero ───────────────── */
   .hero {
     text-align: center;
@@ -411,18 +433,25 @@
 <body>
 
 <header>
-  <div class="logo" onclick="window.location='/'">Deep <span>Desk</span></div>
+  <div class="logo" onclick="window.location='/'">ShieldyH <span>· Deep Desk</span></div>
   <nav class="top-nav">
-    <a class="nav-item active" href="/skills.html">技能市场</a>
-    <a class="nav-item" href="/">Deep Desk</a>
+    <a class="nav-item active" href="/">首页</a>
+    <a class="nav-item" href="/agent-shield.html">Agent Shield</a>
+    <a class="nav-item" href="/intelligence.html">Intelligence System</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-btn">公司AI系统实例 <span class="arrow">&#9662;</span></button>
+      <div class="nav-dropdown-menu">
+        <a href="https://moke.shieldyh.com">磨课评课系统</a>
+      </div>
+    </div>
   </nav>
 </header>
 
 <!-- Hero -->
 <section class="hero">
   <div class="badge">Powered by DeepSeek</div>
-  <h1>桌面上的 DeepSeek AI<br>自带前端的 <em>Deep Desk</em></h1>
-  <p class="subtitle">装好就有可视化界面——浏览器打开直接用，不用记命令、不用翻墙、不用注册 Claude 账户</p>
+  <h1>体验 DeepSeek 驱动的<br><em>Claude Code</em> 完整功能</h1>
+  <p class="subtitle">不用翻墙、不用海外账户、不用配命令行。装好浏览器打开就能用。</p>
   <div class="pain-points">
     <span>注册 Claude 账户（需海外手机）</span>
     <span>翻墙 + VPN</span>
@@ -437,7 +466,7 @@
       <button class="plat-tab" onclick="switchPlatform('linux')">Linux</button>
     </div>
 
-    <a class="download-btn" href="#" onclick="return false">
+    <a id="downloadLink" class="download-btn" href="https://ccb-store.oss-cn-hangzhou.aliyuncs.com/deepdesk/Deep-Desk-latest.dmg">
       <span class="download-icon">↓</span>
       <span>下载 Deep Desk</span>
       <span class="download-hint" id="downloadHint">macOS · 安装后双击打开</span>
@@ -709,7 +738,14 @@ function switchPlatform(plat) {
   document.querySelectorAll('.plat-tab').forEach(b => {
     if (b.textContent.trim().toLowerCase().startsWith(plat)) b.classList.add('active');
   });
+  const urls = {
+    mac: 'https://ccb-store.oss-cn-hangzhou.aliyuncs.com/deepdesk/Deep-Desk-latest.dmg',
+    win: 'https://ccb-store.oss-cn-hangzhou.aliyuncs.com/deepdesk/Deep-Desk-latest.exe',
+    linux: 'https://shieldyh.com/install.sh'
+  };
   const hints = { mac: 'macOS · 安装后双击打开', win: 'Windows 10/11 · 双击安装', linux: 'Linux x64 · 终端运行' };
+  var link = document.getElementById('downloadLink');
+  if (link) link.href = urls[plat] || urls.mac;
   document.getElementById('downloadHint').textContent = hints[plat] || '';
 }
 
